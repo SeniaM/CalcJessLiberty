@@ -4,24 +4,71 @@
 
 using namespace std;
 
-float GetDividend()
-{
-    float Dividend = 0;
-    cout << "Dividend: ";
-    cin >> Dividend;
-    return Dividend;
+void Tape(const char theOperator, const float theOperand) {
+    static const int myTapeSize = 3;
+    static char myOperator[myTapeSize];
+    static float myOperand[myTapeSize];
+
+    static int myNumberOfEntries = 0;
+
+    if(theOperator != '?') {
+        if(myNumberOfEntries < myTapeSize) {
+            myOperator[myNumberOfEntries] = theOperator;
+            myOperand[myNumberOfEntries] = theOperand;
+            ++myNumberOfEntries;
+        }
+        else {
+            throw std::runtime_error("Error - out of room on the tape.");
+        }
+    }
+    else {
+        for(int Index = 0; Index < myNumberOfEntries;++Index) {
+            std::cout << myOperator[Index] << ", " << myOperand[Index] << endl;
+        }
+    }
 }
 
-float GetDivisor()
-{
-    float Divisor = 1;
-    cout << "Divisor: ";
-    cin >> Divisor;
-    return Divisor;
+float Accumulate(const char theOperator, const float theOperand) {
+    static float myAccumulator = 0;
+
+    switch(theOperator) {
+    case '+':
+        myAccumulator += theOperand;
+        break;
+    case '-':
+        myAccumulator -= theOperand;
+        break;
+    case '*':
+        myAccumulator *= theOperand;
+        break;
+    case '/':
+        myAccumulator /= theOperand;
+        break;
+     case '?':
+        break;
+    default:
+        throw runtime_error("Error - Invalid operator");
+    }
+
+    Tape(theOperator, theOperand);
+    return myAccumulator;
 }
 
-float Divide(const float theDividend, const float theDivisor)
-{
+float GetOperator() {
+    char Operator = ' ';
+    cout << "Operator: ";
+    cin >> Operator;
+    return Operator;
+}
+
+float GetOperand() {
+    float Operand = 1;
+    cout << "Operand: ";
+    cin >> Operand;
+    return Operand;
+}
+
+float Divide(const float theDividend, const float theDivisor) {
     return (theDividend/theDivisor);
 }
 
@@ -36,19 +83,23 @@ int main()
 
         try
         {
-            float Dividend = GetDividend();
-            float Divisor = GetDivisor();
+            float Operator = GetOperator();
+            float Operand = GetOperand();
 
-            cout << Divide(Dividend, Divisor) << endl;
+            cout << Accumulate(Operator, Operand) << endl;
         }
 
+        catch(runtime_error RuntimeError)
+        {
+            SAMSErrorHandling::HandleRuntimeError(RuntimeError);
+        }
 
         catch(...)
         {
             ReturnCode = SAMSErrorHandling::HandleNotANumberError();
         };
     }
-    while(SAMSPrompt::UserWantsToContinue("More Division?"));
+    while(SAMSPrompt::UserWantsToContinue("More?"));
 
         SAMSPrompt::PauseForUserAcknowledgement();
 

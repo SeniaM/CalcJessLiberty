@@ -16,3 +16,20 @@
 
 1687000553 c:\users\senia\documents\myprojects\calc jess liberty\calc\errorhandlingmodule.h
 
+1719502275 source:d:\codeblocksproj\calc jess liberty\calc\errorhandlingmodule.cpp
+	<iostream>
+	"ErrorHandlingModule.h"
+
+1719502362 d:\codeblocksproj\calc jess liberty\calc\errorhandlingmodule.h
+
+1719504124 source:d:\codeblocksproj\calc jess liberty\calc\main.cpp
+	<iostream>
+	"PromptModule.h"
+	"ErrorHandlingModule.h"
+
+1687108942 d:\codeblocksproj\calc jess liberty\calc\promptmodule.h
+
+1687737112 source:d:\codeblocksproj\calc jess liberty\calc\promptmodule.cpp
+	<iostream>
+	"PromptModule.h"
+
