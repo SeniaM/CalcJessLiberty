@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1687928182 source:c:\users\senia\documents\myprojects\calc jess liberty\calc\main.cpp
+	<iostream>
+	"PromptModule.h"
+	"ErrorHandlingModule.h"
+
+1687108942 c:\users\senia\documents\myprojects\calc jess liberty\calc\promptmodule.h
+
+1687737112 source:c:\users\senia\documents\myprojects\calc jess liberty\calc\promptmodule.cpp
+	<iostream>
+	"PromptModule.h"
+
+1687115155 source:c:\users\senia\documents\myprojects\calc jess liberty\calc\errorhandlingmodule.cpp
+	<iostream>
+	"ErrorHandlingModule.h"
+
+1687000553 c:\users\senia\documents\myprojects\calc jess liberty\calc\errorhandlingmodule.h
+
