@@ -5,26 +5,52 @@
 using namespace std;
 
 void Tape(const char theOperator, const float theOperand) {
-    static const int myTapeSize = 3;
-    static char myOperator[myTapeSize];
-    static float myOperand[myTapeSize];
+    static const int myTapeChunk = 3;
+    static char *myOperator = new char[myTapeChunk];
+    static int *myOperand = new int[myTapeChunk];
 
+    static int myTapeSize = myTapeChunk;
     static int myNumberOfEntries = 0;
 
-    if(theOperator != '?') {
-        if(myNumberOfEntries < myTapeSize) {
-            myOperator[myNumberOfEntries] = theOperator;
-            myOperand[myNumberOfEntries] = theOperand;
-            ++myNumberOfEntries;
+    switch(theOperator) {
+    case '?':
+        for(int Index = 0; Index < myNumberOfEntries; ++Index) {
+           std::cout << myOperator[Index] << " , "
+                     << myOperand[Index] << std::endl;
         }
-        else {
-            throw std::runtime_error("Error - out of room on the tape.");
+        break;
+
+    case '.':
+        delete [] myOperator;
+        delete [] myOperand;
+
+        break;
+    default:
+        if(myNumberOfEntries == myTapeSize) {
+            char *ExpandedOperator = new char[myNumberOfEntries + myTapeChunk];
+            int *ExpandedOperand =new int[myNumberOfEntries + myTapeChunk];
+
+            char *FromOperator = myOperator;
+            int *FromOperand = myOperand;
+
+            char *ToOperator = ExpandedOperator;
+            int *ToOperand = ExpandedOperand;
+
+            for(int Index = 0; Index < myNumberOfEntries; ++Index) {
+                *ToOperator++ = *FromOperator++;
+                *ToOperand++ = *FromOperand++;
+            }
+            delete [] myOperator;
+            delete [] myOperand;
+
+            myOperator = ExpandedOperator;
+            myOperand = ExpandedOperand;
+
+            myTapeSize += myTapeChunk;
         }
-    }
-    else {
-        for(int Index = 0; Index < myNumberOfEntries;++Index) {
-            std::cout << myOperator[Index] << ", " << myOperand[Index] << endl;
-        }
+        myOperator[myNumberOfEntries] = theOperator;
+        myOperand[myNumberOfEntries] = theOperand;
+        ++myNumberOfEntries;
     }
 }
 
@@ -89,7 +115,7 @@ int main()
             cout << Accumulate(Operator, Operand) << endl;
         }
 
-        catch(runtime_error RuntimeError)
+        catch (const std::runtime_error &RuntimeError)
         {
             SAMSErrorHandling::HandleRuntimeError(RuntimeError);
         }
