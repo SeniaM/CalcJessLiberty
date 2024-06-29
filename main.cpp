@@ -26,7 +26,7 @@ void Tape(const char theOperator, const float theOperand) {
 
         break;
     default:
-        if(myNumberOfEntries == myTapeSize) {
+        if (myNumberOfEntries == myTapeSize) {
             char *ExpandedOperator = new char[myNumberOfEntries + myTapeChunk];
             int *ExpandedOperand =new int[myNumberOfEntries + myTapeChunk];
 
@@ -54,43 +54,54 @@ void Tape(const char theOperator, const float theOperand) {
     }
 }
 
-float Accumulate(const char theOperator, const float theOperand) {
+float Accumulator(const char theOperator, const float theOperand = 0) {
     static float myAccumulator = 0;
 
     switch(theOperator) {
     case '+':
         myAccumulator += theOperand;
+        Tape(theOperator, theOperand);
         break;
     case '-':
         myAccumulator -= theOperand;
+        Tape(theOperator, theOperand);
         break;
     case '*':
         myAccumulator *= theOperand;
+        Tape(theOperator, theOperand);
         break;
     case '/':
         myAccumulator /= theOperand;
+        Tape(theOperator, theOperand);
         break;
-     case '?':
+    case '@':
+        myAccumulator = theOperand;
+        Tape(theOperator, theOperand);
+        break;
+    case '=':
+        std::cout << std::endl << myAccumulator << std::endl;
+        break;
+    case '?':
+        Tape(theOperator, theOperand);
         break;
     default:
         throw runtime_error("Error - Invalid operator");
     }
 
-    Tape(theOperator, theOperand);
     return myAccumulator;
 }
 
 float GetOperator() {
-    char Operator = ' ';
-    cout << "Operator: ";
+    char Operator;
     cin >> Operator;
+
     return Operator;
 }
 
 float GetOperand() {
-    float Operand = 1;
-    cout << "Operand: ";
+    float Operand;
     cin >> Operand;
+
     return Operand;
 }
 
@@ -98,21 +109,71 @@ float Divide(const float theDividend, const float theDivisor) {
     return (theDividend/theDivisor);
 }
 
+bool TestOk(const char theOperator, const float theOperand, const float theExpectedResult) {
+    float Result = Accumulator(theOperator, theOperand);
+    if (Result == theExpectedResult) {
+        std::cout << theOperator << theOperand << " - succeeded." << std::endl;
+        return true;
+    }
+    else {
+        std::cout << theOperator << theOperand << " - failed." << "Expected " << theExpectedResult << ", got " << Result << std::endl;
+        return false;
+    }
+}
+
+void SelfTest() {
+    float OldValue = Accumulator('=');
+
+    try {
+        if (TestOk('@', 0, 0) &&
+           TestOk('+', 3, 3) &&
+           TestOk('-', 2, 1) &&
+           TestOk('*', 4, 4) &&
+           TestOk('/', 2, 2)) {
+           std::cout << "Test completed successfully.";
+        }
+        else {
+            std::cout << "Test failed" << std::endl;
+        }
+    }
+    catch(...) {
+        std::cout << "An exception occured during self test." << std::endl;
+    }
+    Accumulator('@', OldValue);
+}
+
 int main()
 {
     SAMSErrorHandling::Initialize();
 
-    int ReturnCode = 0;
+    char Operator;
      do
     {
 
 
         try
         {
-            float Operator = GetOperator();
-            float Operand = GetOperand();
+            Operator = GetOperator();
 
-            cout << Accumulate(Operator, Operand) << endl;
+            if (Operator == '+' ||
+               Operator == '-' ||
+               Operator == '*' ||
+               Operator == '/' ||
+               Operator == '@') {
+
+               float Operand = GetOperand();
+               Accumulator(Operator, Operand);
+            }
+            else if (Operator == '!') {
+                SelfTest();
+            }
+            else if (Operator == '.') {
+
+            }
+            else {
+                Accumulator(Operator);
+            }
+
         }
 
         catch (const std::runtime_error &RuntimeError)
@@ -122,13 +183,11 @@ int main()
 
         catch(...)
         {
-            ReturnCode = SAMSErrorHandling::HandleNotANumberError();
+            SAMSErrorHandling::HandleNotANumberError();
         };
     }
-    while(SAMSPrompt::UserWantsToContinue("More?"));
-
-        SAMSPrompt::PauseForUserAcknowledgement();
-
-        return ReturnCode;
+    while(Operator != '.');
+    Tape('.', 0);
+        return 0;
 
 }
